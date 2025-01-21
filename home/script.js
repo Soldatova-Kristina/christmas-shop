@@ -1,15 +1,12 @@
-
-
 // Burger Menu
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector('.headerBurger').addEventListener("click", function() {
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector('.headerBurger').addEventListener("click", function () {
         document.querySelector('.header').classList.toggle('open');
         document.querySelector('body').classList.toggle('no_scroll');
     });
 
     document.querySelectorAll('.headerMenuItem').forEach((link) => {
         link.addEventListener("click", function (event) {
-
             event.preventDefault();
             const link = this.href;
 
@@ -20,8 +17,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 window.location.href = link;
             }, 500);
         });
-    })
-})
+    });
+});
+
 // New Year Timer
 function getDate() {
     const thisYear = new Date().getFullYear();
@@ -48,10 +46,10 @@ function refreshTimer() {
     );
     const seconds = Math.floor((availableTime % (1000 * 60)) / 1000);
 
-    document.getElementById("day").textContent = day;
-    document.getElementById("hours").textContent = hours;
-    document.getElementById("minutes").textContent = minutes;
-    document.getElementById("seconds").textContent = seconds;
+    document.getElementById("day").textContent = day.toString();
+    document.getElementById("hours").textContent = hours.toString();
+    document.getElementById("minutes").textContent = minutes.toString();
+    document.getElementById("seconds").textContent = seconds.toString();
 }
 
 if (document.body.dataset.page === "index") {
@@ -59,7 +57,7 @@ if (document.body.dataset.page === "index") {
     refreshTimer();
 }
 
-//ScrollToTop
+// ScrollToTop
 const scrollToTopBtn = document.getElementById("scrollToTopBtn");
 window.addEventListener("scroll", () => {
     if (window.innerWidth <= 768 && window.scrollY > 300) {
@@ -75,270 +73,122 @@ scrollToTopBtn.addEventListener("click", () => {
         behavior: "smooth",
     });
 });
-// Slider
-const sliderLeftBtn = document.querySelector(".sliderLeftBtn");
-const sliderRightBtn = document.querySelector(".sliderRightBtn");
-const sliderItems = document.querySelector(".sliderItems");
 
-// Gifts SortByID
+// Gifts Filter
 const list = document.querySelector(".cardsCategory");
 const items = document.querySelectorAll(".blocksItem");
 const listItems = document.querySelectorAll(".categoryItem");
 
-function filter() {
-    list.addEventListener("click", evt => {
-        const targetId = evt.target.dataset.id;
-        console.log(list);
-        listItems.forEach(listItem => listItem.classList.remove('active'))
+list.addEventListener("click", (evt) => {
+    const targetId = evt.target.dataset.id;
+    listItems.forEach((listItem) => listItem.classList.remove("active"));
+    evt.target.classList.add("active");
 
-        switch (targetId) {
-            case 'all':
-                items.forEach(item => {
-                    if (item.classList.contains("blocksItem")) {
-                        item.style.display = "block";
-                    } else {
-                        item.style.display = "none";
-                    }
-                })
-                break
-            case 'work':
-                items.forEach(item => {
-                    if (item.classList.contains("ItemWork")) {
-                        item.style.display = "block";
-                    } else {
-                        item.style.display = "none";
-                    }
-                })
-                break
-            case 'health':
-                items.forEach(item => {
-                    if (item.classList.contains("ItemHealth")) {
-                        item.style.display = "block";
-                    } else {
-                        item.style.display = "none";
-                    }
-                })
-                break
-            case 'harmony':
-                items.forEach(item => {
-                    if (item.classList.contains("ItemHarmony")) {
-                        item.style.display = "block";
-                    } else {
-                        item.style.display = "none";
-                    }
-                })
-                break
-        }
-    })
-}
+    items.forEach((item) => {
+        item.style.display = targetId === "all" || item.classList.contains(`Item${targetId.charAt(0).toUpperCase() + targetId.slice(1)}`) ? "block" : "none";
+    });
+});
 
-filter()
+// Gifts Slider
+let offset = 0;
+const step = 300;
+const maxOffset = 0;
+const minOffset = -step * 3;
 
-// Gifts slider
-
-const arrowLeft = document.querySelector('.sliderLeftBtn');
 const arrowRight = document.querySelector('.sliderRightBtn');
+const arrowLeft = document.querySelector('.sliderLeftBtn');
 const slider = document.querySelector('.sliderItems');
 
-let offset = 0;
-const sliderWidth = 2061;
-let visibleWidth = Math.min(window.innerWidth);
-let step = calculateStep();
-
-function calculateStep() {
-    const stepValue = window.innerWidth < 769
-        ? (sliderWidth - visibleWidth) / 6
-        : (sliderWidth - visibleWidth) / 3;
-
-    return Math.max(stepValue, 50);
-}
-
-const updateStepAndWidth = () => {
-    visibleWidth = Math.min(window.innerWidth);
-    step = calculateStep();
-    offset = 0;
+arrowRight.addEventListener('click', () => {
+    if (offset > minOffset) offset -= step;
     slider.style.transform = `translateX(${offset}px)`;
-    slider.style.transition = 'transform 0.5s ease';
-};
-
-const calculateLimits = () => ({
-    maxOffset: 0,
-    minOffset: -step * (window.innerWidth < 769 ? 6 : 3),
 });
 
-const updateButtons = () => {
-    const { maxOffset, minOffset } = calculateLimits();
-    arrowLeft.disabled = offset >= maxOffset;
-    arrowRight.disabled = offset <= minOffset;
-
-    arrowLeft.classList.toggle('disabled', offset >= maxOffset);
-    arrowRight.classList.toggle('disabled', offset <= minOffset);
-};
-
-arrowRight.addEventListener('click', function () {
-    const { minOffset } = calculateLimits();
-    if (offset > minOffset) {
-        offset -= step;
-        if (offset < minOffset) offset = minOffset;
-        slider.style.transform = `translateX(${offset}px)`;
-        slider.style.transition = 'transform 0.5s ease';
-        updateButtons();
-    }
+arrowLeft.addEventListener('click', () => {
+    if (offset < maxOffset) offset += step;
+    slider.style.transform = `translateX(${offset}px)`;
 });
 
-arrowLeft.addEventListener('click', function () {
-    const { maxOffset } = calculateLimits();
-    if (offset < maxOffset) {
-        offset += step;
-        if (offset > maxOffset) offset = maxOffset;
-        slider.style.transform = `translateX(${offset}px)`;
-        slider.style.transition = 'transform 1s ease';
-        updateButtons();
-    }
-});
-
-window.addEventListener('resize', () => {
-    updateStepAndWidth();
-    updateButtons();
-});
-
-updateStepAndWidth();
-updateButtons();
-
-
-//random and modal
-var requestURL = "https://github.com/rolling-scopes-school/tasks/blob/master/tasks/christmas-shop/gifts.json"
-var request = new XMLHttpRequest();
-request.open("GET", requestURL);
-request.responseType = "json";
-request.send();
-
-fetch('../home/gifts.json')
-    .then(response => response.json())
-    .then(data => {
+// Fetch and Modal
+fetch('./gifts.json')
+    .then((response) => {
+        if (!response.ok) throw new Error('Error fetching data');
+        return response.json();
+    })
+    .then((data) => {
         const cardsContainer = document.querySelector('.giftsItems');
+        const randomCards = data.sort(() => Math.random() - 0.5).slice(0, 4);
 
-        const mixedCards = data.sort(() => 0.5 - Math.random());
-        const randomCards = mixedCards.slice(0, 4);
-
-        randomCards.forEach(item => {
+        randomCards.forEach((item) => {
             const card = document.createElement('div');
             card.classList.add('blocksItem');
 
-            const cardDescription = document.createElement('div');
-            cardDescription.classList.add('giftsText')
+            const imageSrc = {
+                work: '../assets/images/gift-for-work.png',
+                harmony: '../assets/images/gift-for-harmony.png',
+                health: '../assets/images/gift-for-health.png',
+            }[item.category];
 
-            let imageSrc = '';
-
-            if (item.category === "work") {
-                imageSrc = '..assets/images/gift-for-work.png';
-            } else if (item.category === "harmony") {
-                imageSrc = '..assets/images/gift-for-harmony.png';
-            } else {
-                imageSrc = '..assets/images/gift-for-health.png';
-            }
+            const fontColor = {
+                work: '#4361FF',
+                harmony: '#FF43F7',
+                health: '#06A44F',
+            }[item.category];
 
             card.innerHTML = `
-        <img src="${imageSrc}" alt="${item.category}"> 
-    `;
-
-            let fontColor = '';
-
-            if (item.category === "work") {
-                fontColor = '#4361FF';
-            } else if (item.category === "harmony") {
-                fontColor = '#FF43F7';
-            } else {
-                fontColor = '#06A44F';
-            }
-
-
-            cardDescription.innerHTML = `
-        <h4 style="color: ${fontColor};">${item.category}</h4>
-        <p>${item.name}</p>
-    `
-            card.appendChild(cardDescription)
+                <img src="${imageSrc}" alt="${item.category}" loading="lazy">
+                <div class="giftsText">
+                    <h4 style="color: ${fontColor}">${item.category}</h4>
+                    <p>${item.name}</p>
+                </div>
+            `;
             cardsContainer.appendChild(card);
 
-            const cardsPopup = document.querySelector('.cards_popup');
-            const body = document.querySelector('body')
-
-            card.addEventListener('click', function () {
-
-                cardsPopup.classList.add('open');
-                body.classList.add('no_scroll')
-
-                cardsPopup.innerHTML = `
-    <div class="popup_container">
-        <div class="popup">
-            <div class="close_btn"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <path d="M30 10L10 30" stroke="#181C29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10 10L30 30" stroke="#181C29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></div>
-            <img src="${imageSrc}" alt="${item.category}"> 
-            <div class="popup_content">
-            <div class="popup_info">
-            <h4 style="color: ${fontColor};">${item.category}</h4>
-            <h3>${item.name}</h3>
-            <p>${item.description}</p>
-        </div>
-        <div class="superpowers">
-        <h4>Adds superpowers to:</h4></div>
-        <div class="points_info">
-            <p class="desc">Live</p>
-            <p class="points">${item.superpowers.live}</p>
-            <div class="snowflakes"></div>
-        </div>
-       <div class="points_info">
-            <p class="desc">Create</p>
-            <p class="points">${item.superpowers.create}</p>
-            <div class="snowflakes"></div>
-        </div>
-    <div class="points_info">
-            <p class="desc">Love</p>
-            <p class="points">${item.superpowers.love}</p>
-            <div class="snowflakes"></div>
-        </div>
-         <div class="points_info">
-            <p class="desc">Dream</p>
-            <p class="points">${item.superpowers.dream}</p>
-            <div class="snowflakes"></div>
-        </div>
-    </div>
-
-        </div>
-`;
-                Object.values(item.superpowers).forEach((flakesNumber, index) => {
-                    let snowFlakesNumber = Number(flakesNumber) / 100;
-                    let flakesContainer = document.querySelectorAll('.snowflakes');
-
-                    if (flakesContainer[index]) {
-                        let content = '';
-                        for (let i = 1; i <= 5; i++) {
-                            if (snowFlakesNumber >= i) {
-                                content += `<div class="snowflakes_red"></div>`;
-                            } else {
-                                content += `<div class="snowflakes_none"></div>`;
-                            }
-                        }
-                        flakesContainer[index].innerHTML = content;
-                    }
-                });
-            })
-            cardsPopup.addEventListener('click', function (event) {
-                if (!event.target.closest('.popup')) {
-                    cardsPopup.classList.remove('open');
-                    body.classList.remove('no_scroll');
-                }
-            });
-
-            const closeModalBtn = document.querySelector('.close_btn');
-            cardsPopup.addEventListener('click', function (event) {
-                if (event.target.closest('.close_btn')) {
-                    cardsPopup.classList.remove('open');
-                    body.classList.remove('no_scroll');
-                }
-            });
-        })
+            card.addEventListener('click', () => openModal(item, imageSrc, fontColor));
+        });
     })
+    .catch((error) => console.error('Error loading gifts:', error));
 
+function openModal(item, imageSrc, fontColor) {
+    const cardsPopup = document.querySelector('.cards_popup');
+    const body = document.querySelector('body');
+
+    const snowflakesHTML = Object.values(item.superpowers)
+        .map(count => {
+            const flakes = Math.round(count / 100);
+            return `<div class="snowflakes">
+                ${Array(5).fill(0).map((_, i) => i < flakes ? `<div class="snowflakes_red"></div>` : `<div class="snowflakes_none"></div>`).join('')}
+            </div>`;
+        })
+        .join('');
+
+    cardsPopup.innerHTML = `
+        <div class="popup_container">
+            <div class="popup">
+                <button class="close_btn">✖</button>
+                <img src="${imageSrc}" alt="${item.category}">
+                <div class="popup_content">
+                    <h4 style="color: ${fontColor}">${item.category}</h4>
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                    ${snowflakesHTML}
+                </div>
+            </div>
+        </div>
+    `;
+
+    cardsPopup.classList.add('open');
+    body.classList.add('no_scroll');
+
+    cardsPopup.querySelector('.close_btn').addEventListener('click', () => {
+        cardsPopup.classList.remove('open');
+        body.classList.remove('no_scroll');
+    });
+
+    cardsPopup.addEventListener('click', (e) => {
+        if (!e.target.closest('.popup')) {
+            cardsPopup.classList.remove('open');
+            body.classList.remove('no_scroll');
+        }
+    });
+}
