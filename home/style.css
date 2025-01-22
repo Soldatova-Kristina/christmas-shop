@@ -286,12 +286,10 @@ header {
     text-transform: uppercase;
 }
 .sliderContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    position: relative;
     background: url('../assets/images/bg-snow.png') center/cover no-repeat, var(--primary);
-    gap: 20px;
+    width: 100%;
+    overflow: hidden;
 }
 .sliderContainer p {
     font-family: 'Allura', sans-serif;
@@ -304,20 +302,13 @@ header {
 .sliderContainer h3 {
     margin-top: 12px;
 }
-.sliderContent {
+.sliderContent{
     max-width: 426px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+    margin: 0 auto;
 }
 .sliderItems {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
-    margin: -5px 0 -10px 85px;
-    overflow: hidden;
     gap: 20px;
 }
 .sliderItems p {
@@ -328,11 +319,13 @@ header {
     line-height: normal;
     text-transform: uppercase;
     letter-spacing: normal;
+    flex-shrink: 0;
 }
 .sliderItems img {
     max-width: 200px;
     width: 100%;
     border-radius: 20px;
+    flex-shrink: 0;
 }
 .sliderControls {
     width: 100%;
@@ -367,6 +360,8 @@ header {
 }
 .sliderLeftBtn:disabled {
     border: 1px solid rgba(255, 255, 255, 0.40);
+    opacity: 0.5;
+    pointer-events: none;
 }
 .sliderLeftBtn:disabled svg path {
     stroke: rgba(255, 255, 255, 0.40);
@@ -672,7 +667,7 @@ header {
 .snowflakes_none {
     width: 14px;
     height: 16px;
-    background: url('../assets/icons/snowflake_none.svg') no-repeat center / cover;
+    background: url('../assets/icons/snowflake.svg') no-repeat center / cover;
     color: #FF4646;
 }
 
@@ -1156,9 +1151,6 @@ header {
     }
     .ctaContainer {
         margin-top: 17px;
-    }
-    .sliderItems {
-        margin-left: 473px;
     }
     .copyright {
         font-size: 16px;
